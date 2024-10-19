@@ -13,53 +13,90 @@ def get_border(img):
             return result
 
 
+def crop_image(img, borders):
+    parsed_images = []
+
+    for _ in range(6):
+        print(_, end=" ")
+        img_crop = img.crop(borders)
+        img_name = "crop_" + str(_) + ".png"
+        img_crop.save(img_name)
+        cropped_image = Image.open(img_name)
+        name = " ".join(crop_name(cropped_image))
+        per_hour = " ".join(crop_per_hour(cropped_image))
+        price = " ".join(crop_price(cropped_image))
+        parsed_image = [name, per_hour, price]
+
+        borders[1] += 121
+        borders[3] += 121
+
+        parsed_images.append(parsed_image)
+
+    return parsed_images
+
+def crop_name(img):
+    img.crop((100,0,370,65)).save("temp_name.png")
+    return text_recognition("temp_name.png")
+
+
+def crop_per_hour(img):
+    img.crop((370,0,520,40)).save("temp_per_hour.png")
+    return text_recognition("temp_per_hour.png")
+
+
+def crop_price(img):
+    img.crop((383,40,520,90)).save("temp_price.png")
+    return text_recognition("temp_price.png")
+
+
 def text_recognition(img_path):
     reader = easyocr.Reader(["ru", "en"], gpu=True)
+    # reader = easyocr.Reader(["ru", "en"], gpu=False)
     result = reader.readtext(img_path, detail=0)
 
     return result
 
 
 def calc_profit(data):
+    profit_items = {}
     for item in data:
-        for i in item:
-            if "в час" in i:
-                if "." or "," in i:
-                    # print(i)
-                    hour = float(i.split(".")[0]) * 1000
-                    print('1', hour)
-                else:
-                    hour = float(i.split(" ")[0])
-                    print('2', hour)
+        if ","  in item[1]:
+            item[1] = item[1].replace(",", ".")
 
-        for i in item:
-            if ("." or "," in i) and "в час" not in i:
-                print('3', i)
+        if 'k' in item[1]:
+            hour = float(item[1].split("k")[0]) * 1000
+        else:
+            hour = float(item[1].split(" ")[0])
+
+        print(hour, end=" ")
+        if ","  in item[2]:
+            item[2] = item[2].replace(",", ".")
+        price = float(item[2].split("k")[0]) * 1000
+
+        print(price)
+        profit_items[item[0]] = price // hour
+        print(profit_items)
+    return profit_items
 
 
 def main():
-    img = Image.open("image.png")
+    full_img = Image.open("img.png")
     # img = Image.open("img2.jpg")
-    borders = list(get_border(img))
+
+    borders = list(get_border(full_img))
     print(borders)
-    im_crop = img.crop(borders)
 
-    # im_crop.show()
-    print(img.height // (borders[3] - borders[1]))
-    # im_crop.save("crop.png")
+    cropped_images = crop_image(full_img, borders)
 
-    recognized_data = []
-    for _ in range(6):
-        print(_)
-        im_crop = img.crop(borders)
-        im_crop.save("crop_" + str(_) + ".png")
-        recognized_data.append(text_recognition("crop_" + str(_) + ".png"))
-        borders[1] += 121
-        borders[3] += 121
+    print(*cropped_images, sep="\n")
 
-    print(*recognized_data, sep="\n")
+    profit = calc_profit(data=cropped_images)
+    print(profit)
 
-    calc_profit(recognized_data)
+
+    # print(*recognized_data, sep="\n")
+    #
+    # calc_profit(recognized_data)
 
 
 if __name__ == "__main__":
