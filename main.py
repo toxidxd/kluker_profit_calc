@@ -2,6 +2,8 @@ import os
 
 from PIL import Image
 import easyocr
+from torch.autograd.profiler import profile
+
 from opencv_module import get_borders
 
 # def get_border(img):
@@ -27,23 +29,20 @@ def crop_image(img, borders, num):
     price = " ".join(crop_price(cropped_image))
     parsed_image = [name, per_hour, price]
 
-
-    parsed_images.append(parsed_image)
-
-    return parsed_images
+    return parsed_image
 
 def crop_name(img):
-    img.crop((100,0,370,65)).save("temp_name.png")
+    img.crop((150,0,370,65)).save("temp_name.png")
     return text_recognition("temp_name.png")
 
 
 def crop_per_hour(img):
-    img.crop((370,0,520,40)).save("temp_per_hour.png")
+    img.crop((400,0,560,40)).save("temp_per_hour.png")
     return text_recognition("temp_per_hour.png")
 
 
 def crop_price(img):
-    img.crop((383,40,520,90)).save("temp_price.png")
+    img.crop((415,40,556,90)).save("temp_price.png")
     return text_recognition("temp_price.png")
 
 
@@ -66,18 +65,19 @@ def calc_profit(data):
         else:
             hour = float(item[1].split(" ")[0])
 
-        print(hour, end=" ")
+        # print(hour, end=" ")
         if ","  in item[2]:
             item[2] = item[2].replace(",", ".")
         price = float(item[2].split("k")[0]) * 1000
 
-        print(price)
+        # print(price)
         profit_items[item[0]] = price // hour
-        print(profit_items)
+        # print(profit_items)
     return profit_items
 
 
 def main():
+    cropped_images = []
     crop_num = 0
     for template in os.listdir('templates'):
         # print(template)
@@ -86,9 +86,13 @@ def main():
             borders = get_borders(f'screenshots/{img}', f'templates/{template}')
             if borders != 0:
                 print(borders)
-                print(crop_image(f'screenshots/{img}', borders, crop_num))
+                cropped_images.append(crop_image(f'screenshots/{img}', borders, crop_num))
                 crop_num += 1
-
+    # print(cropped_images)
+    profit = calc_profit(cropped_images)
+    profit = {k: v for k, v in sorted(profit.items(), key=lambda item: item[1])}
+    for key in profit.keys():
+        print(f'{key}: {profit[key]}')
 
     # full_img = Image.open("img.png")
     # # img = Image.open("img2.jpg")
