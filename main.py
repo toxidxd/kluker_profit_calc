@@ -1,36 +1,34 @@
+import os
+
 from PIL import Image
 import easyocr
+from opencv_module import get_borders
+
+# def get_border(img):
+#     for y in range(img.height):
+#         # print(y, img.getpixel((50, y)))
+#         pixel_color = img.getpixel((50, y))
+#         red, green, blue = img.getpixel((50, y))[0:3]
+#         if red in range(105, 130) and green in range(55, 70) and blue in range(203, 223):
+#             # if pixel_color == (112, 80, 178):
+#             result = (37, y, 559, y + 99)
+#             return result
 
 
-def get_border(img):
-    for y in range(img.height):
-        # print(y, img.getpixel((50, y)))
-        pixel_color = img.getpixel((50, y))
-        red, green, blue = img.getpixel((50, y))[0:3]
-        if red in range(105, 130) and green in range(55, 70) and blue in range(203, 223):
-            # if pixel_color == (112, 80, 178):
-            result = (37, y, 559, y + 99)
-            return result
-
-
-def crop_image(img, borders):
+def crop_image(img, borders, num):
+    img = Image.open(img)
     parsed_images = []
+    img_crop = img.crop(borders)
+    img_name = "crop_" + str(num) + ".jpg"
+    img_crop.save(img_name)
+    cropped_image = Image.open(img_name)
+    name = " ".join(crop_name(cropped_image))
+    per_hour = " ".join(crop_per_hour(cropped_image))
+    price = " ".join(crop_price(cropped_image))
+    parsed_image = [name, per_hour, price]
 
-    for _ in range(6):
-        print(_, end=" ")
-        img_crop = img.crop(borders)
-        img_name = "crop_" + str(_) + ".png"
-        img_crop.save(img_name)
-        cropped_image = Image.open(img_name)
-        name = " ".join(crop_name(cropped_image))
-        per_hour = " ".join(crop_per_hour(cropped_image))
-        price = " ".join(crop_price(cropped_image))
-        parsed_image = [name, per_hour, price]
 
-        borders[1] += 121
-        borders[3] += 121
-
-        parsed_images.append(parsed_image)
+    parsed_images.append(parsed_image)
 
     return parsed_images
 
@@ -80,18 +78,30 @@ def calc_profit(data):
 
 
 def main():
-    full_img = Image.open("img.png")
-    # img = Image.open("img2.jpg")
+    crop_num = 0
+    for template in os.listdir('templates'):
+        # print(template)
+        for img in os.listdir('screenshots'):
+            # print(img)
+            borders = get_borders(f'screenshots/{img}', f'templates/{template}')
+            if borders != 0:
+                print(borders)
+                print(crop_image(f'screenshots/{img}', borders, crop_num))
+                crop_num += 1
 
-    borders = list(get_border(full_img))
-    print(borders)
 
-    cropped_images = crop_image(full_img, borders)
-
-    print(*cropped_images, sep="\n")
-
-    profit = calc_profit(data=cropped_images)
-    print(profit)
+    # full_img = Image.open("img.png")
+    # # img = Image.open("img2.jpg")
+    #
+    # borders = list(get_border(full_img))
+    # print(borders)
+    #
+    # cropped_images = crop_image(full_img, borders)
+    #
+    # print(*cropped_images, sep="\n")
+    #
+    # profit = calc_profit(data=cropped_images)
+    # print(profit)
 
 
     # print(*recognized_data, sep="\n")

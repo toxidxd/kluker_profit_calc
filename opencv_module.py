@@ -18,10 +18,20 @@ def get_borders(img, template):
     threshold = 0.8
     # Store the coordinates of matched location in a numpy array
     loc = np.where(res >= threshold)
-    print('loc', loc[1][0], loc[0][0])
-    print('loc', loc[1][0], loc[0][0])
-    result = (0, int(loc[0][0]), w_img, int(loc[0][0] + h))
-    print(result)
-    return result
+    # print(loc)
+    if len(loc[0]) != 0:
+        # print('z')
+        # print('loc', loc[1][0], loc[0][0])
+        # print('loc', loc[1][0], loc[0][0])
+        result = (0, int(loc[0][0]), w_img, int(loc[0][0] + h))
+        # print(result)
+        return result
+    else:
+        # print(0)
+        return 0
+
+
+if __name__ == '__main__':
+    get_borders('screenshots/img_low_5.jpg', 'templates/5.jpg')
 
 

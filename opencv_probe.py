@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
 # Reading the main image
-img_rgb = cv2.imread(r'image.jpg',1)
+img_rgb = cv2.imread(r'screenshots/img_low_5.jpg',1)
 # It is need to be convert it to grayscale
 img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
 # Read the template
-template = cv2.imread(r'template_11.jpg',0)
+template = cv2.imread(r'templates/5.jpg',0)
 # Store width in variable w and height in variable h of template
 print(template.shape)
 w, h = template.shape
