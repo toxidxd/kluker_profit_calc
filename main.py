@@ -58,8 +58,8 @@ def crop_price(img):
 
 def text_recognition(img_path):
     logger.info(f"Recognizing {img_path}")
-    reader = easyocr.Reader(["ru", "en"], gpu=True)
-    # reader = easyocr.Reader(["ru", "en"], gpu=False)
+    # reader = easyocr.Reader(["ru", "en"], gpu=True)
+    reader = easyocr.Reader(["ru", "en"], gpu=False)
     result = reader.readtext(img_path, detail=0)
 
     return result
@@ -114,11 +114,10 @@ def main():
                 logger.info(f"Found borders for {img}")
                 cropped_images.append(crop_image(f'screenshots/{img}', borders, crop_num))
                 crop_num += 1
-    # print(cropped_images)
-    profit = calc_profit(cropped_images)
-    profit = {k: v for k, v in sorted(profit.items(), key=lambda item: item[1])}
+
+    profit = {k: v for k, v in sorted(calc_profit(cropped_images).items(), key=lambda item: item[1])}
     for i, key in enumerate(profit.keys()):
-        print(f'{i} {key}: {profit[key]}')
+        print(f'{i+1} {key}: {profit[key]}')
 
 
 if __name__ == "__main__":
