@@ -72,7 +72,7 @@ def calc_profit(data):
             if item[1].isalnum():
                 hour = float(item[1]) * 1000
             else:
-                hour = 0
+                hour = 1
         else:
             hour = float(item[1].split(" ")[0])
 
