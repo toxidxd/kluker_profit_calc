@@ -3,7 +3,6 @@ import logging
 
 from PIL import Image
 import easyocr
-from torch.autograd.profiler import profile
 
 from opencv_module import get_borders
 

@@ -24,7 +24,7 @@ def get_borders(img, template):
         # print('loc', loc[1][0], loc[0][0])
         # print('loc', loc[1][0], loc[0][0])
         result = (0, int(loc[0][0]), w_img, int(loc[0][0] + h))
-        # print(result)
+        print(result)
         return result
     else:
         # print(0)
@@ -32,6 +32,6 @@ def get_borders(img, template):
 
 
 if __name__ == '__main__':
-    get_borders('screenshots/img_low_5.jpg', 'templates/5.jpg')
+    get_borders('screenshots/img_low_1.jpg', 'templates/5.jpg')
 
 
