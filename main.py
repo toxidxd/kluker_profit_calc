@@ -1,10 +1,13 @@
 import os
-
+import logging
 from PIL import Image
 import easyocr
 from torch.autograd.profiler import profile
 
 from opencv_module import get_borders
+
+logging.basicConfig(level=logging.INFO)
+
 
 # def get_border(img):
 #     for y in range(img.height):
@@ -31,18 +34,19 @@ def crop_image(img, borders, num):
 
     return parsed_image
 
+
 def crop_name(img):
-    img.crop((150,0,370,65)).save("temp_name.png")
+    img.crop((150, 0, 370, 65)).save("temp_name.png")
     return text_recognition("temp_name.png")
 
 
 def crop_per_hour(img):
-    img.crop((400,0,560,40)).save("temp_per_hour.png")
+    img.crop((400, 0, 560, 40)).save("temp_per_hour.png")
     return text_recognition("temp_per_hour.png")
 
 
 def crop_price(img):
-    img.crop((415,40,556,90)).save("temp_price.png")
+    img.crop((415, 40, 556, 90)).save("temp_price.png")
     return text_recognition("temp_price.png")
 
 
@@ -58,10 +62,10 @@ def calc_profit(data):
     profit_items = {}
     for item in data:
         print(item)
-        if ","  in item[1]:
+        if "," in item[1]:
             item[1] = item[1].replace(",", ".")
 
-        if "+"  in item[1]:
+        if "+" in item[1]:
             item[1] = item[1].replace("+", "")
 
         if "З" in item[1]:
@@ -77,14 +81,13 @@ def calc_profit(data):
             hour = float(item[1].split(" ")[0])
 
         # print(hour, end=" ")
-        if ","  in item[2]:
+        if "," in item[2]:
             item[2] = item[2].replace(",", ".")
 
-        if " "  in item[2]:
+        if " " in item[2]:
             item[2] = item[2].replace(" ", ".")
 
         price = float(item[2].split("k")[0]) * 1000
-
 
         # print(price)
         profit_items[item[0]] = price // hour
@@ -109,24 +112,6 @@ def main():
     profit = {k: v for k, v in sorted(profit.items(), key=lambda item: item[1])}
     for i, key in enumerate(profit.keys()):
         print(f'{i} {key}: {profit[key]}')
-
-    # full_img = Image.open("img.png")
-    # # img = Image.open("img2.jpg")
-    #
-    # borders = list(get_border(full_img))
-    # print(borders)
-    #
-    # cropped_images = crop_image(full_img, borders)
-    #
-    # print(*cropped_images, sep="\n")
-    #
-    # profit = calc_profit(data=cropped_images)
-    # print(profit)
-
-
-    # print(*recognized_data, sep="\n")
-    #
-    # calc_profit(recognized_data)
 
 
 if __name__ == "__main__":
