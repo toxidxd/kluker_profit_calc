@@ -79,7 +79,12 @@ def calc_profit(data):
         # print(hour, end=" ")
         if ","  in item[2]:
             item[2] = item[2].replace(",", ".")
+
+        if " "  in item[2]:
+            item[2] = item[2].replace(" ", ".")
+
         price = float(item[2].split("k")[0]) * 1000
+
 
         # print(price)
         profit_items[item[0]] = price // hour
