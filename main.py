@@ -57,8 +57,15 @@ def text_recognition(img_path):
 def calc_profit(data):
     profit_items = {}
     for item in data:
+        print(item)
         if ","  in item[1]:
             item[1] = item[1].replace(",", ".")
+
+        if "+"  in item[1]:
+            item[1] = item[1].replace("+", "")
+
+        if "З" in item[1]:
+            item[1] = item[1].replace("З", "3")
 
         if 'k' in item[1]:
             hour = float(item[1].split("k")[0]) * 1000
@@ -91,8 +98,8 @@ def main():
     # print(cropped_images)
     profit = calc_profit(cropped_images)
     profit = {k: v for k, v in sorted(profit.items(), key=lambda item: item[1])}
-    for key in profit.keys():
-        print(f'{key}: {profit[key]}')
+    for i, key in enumerate(profit.keys()):
+        print(f'{i} {key}: {profit[key]}')
 
     # full_img = Image.open("img.png")
     # # img = Image.open("img2.jpg")
