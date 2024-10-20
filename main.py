@@ -39,19 +39,19 @@ def crop_image(img, borders, num):
 
 def crop_name(img):
     logger.info("Cropping name")
-    img.crop((150, 0, 370, 65)).save("temp_name.png")
+    img.crop((252, 0, 724, 114)).save("temp_name.png")
     return text_recognition("temp_name.png")
 
 
 def crop_per_hour(img):
     logger.info("Cropping per hour")
-    img.crop((400, 0, 560, 40)).save("temp_per_hour.png")
+    img.crop((721, 0, 1024, 80)).save("temp_per_hour.png")
     return text_recognition("temp_per_hour.png")
 
 
 def crop_price(img):
     logger.info("Cropping price")
-    img.crop((415, 40, 556, 90)).save("temp_price.png")
+    img.crop((776, 85, 1000, 162)).save("temp_price.png")
     return text_recognition("temp_price.png")
 
 
