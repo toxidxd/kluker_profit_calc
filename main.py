@@ -68,7 +68,11 @@ def calc_profit(data):
             item[1] = item[1].replace("З", "3")
 
         if 'k' in item[1]:
-            hour = float(item[1].split("k")[0]) * 1000
+            item[1] = item[1].split("k")[0]
+            if item[1].isalnum():
+                hour = float(item[1]) * 1000
+            else:
+                hour = 0
         else:
             hour = float(item[1].split(" ")[0])
 
