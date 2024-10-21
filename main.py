@@ -92,11 +92,11 @@ def calc_profit(data):
 
 def main():
     cropped_images = []
-    crop_num = 0
+    crop_num = 1
     for template in os.listdir('templates'):
-        logger.info(template)
+        logger.info(f"Look template {template}")
         for img in os.listdir('screenshots'):
-            logger.info(img)
+            logger.info(f"Seek in {img}")
             borders = get_borders(f'screenshots/{img}', f'templates/{template}')
             if borders != 0:
                 logger.info(f"Found borders for {img}")
