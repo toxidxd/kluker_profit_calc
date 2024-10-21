@@ -1,30 +1,19 @@
 import os
 import logging
+import sys
 
 from PIL import Image
 import easyocr
 
 from opencv_module import get_borders
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger(__name__)
-
-
-# def get_border(img):
-#     for y in range(img.height):
-#         # print(y, img.getpixel((50, y)))
-#         pixel_color = img.getpixel((50, y))
-#         red, green, blue = img.getpixel((50, y))[0:3]
-#         if red in range(105, 130) and green in range(55, 70) and blue in range(203, 223):
-#             # if pixel_color == (112, 80, 178):
-#             result = (37, y, 559, y + 99)
-#             return result
 
 
 def crop_image(img, borders, num):
     logger.info(f"Cropping {num} image")
     img = Image.open(img)
-    parsed_images = []
     img_crop = img.crop(borders)
     img_name = "crop_" + str(num) + ".jpg"
     img_crop.save(img_name)
@@ -59,34 +48,34 @@ def text_recognition(img_path):
     logger.info(f"Recognizing {img_path}")
     # reader = easyocr.Reader(["ru", "en"], gpu=True)
     reader = easyocr.Reader(["ru", "en"], gpu=False)
-    result = reader.readtext(img_path, detail=0)
-
+    result = reader.readtext(img_path, text_threshold=0.9, detail=0)
+    logger.info(f"Recognized: {result}")
     return result
+
+
+def correct_profit_per_hour(data):
+    logger.info(f"Correcting profit per hour")
+    correct = []
+    for ch in data:
+        if ch == "." or ch.isdigit():
+            correct.append(ch)
+        else:
+            correct.append('0')
+
+    return float("".join(correct)) * 1000
 
 
 def calc_profit(data):
     profit_items = {}
     for item in data:
-        print(item)
-        if "," in item[1]:
-            item[1] = item[1].replace(",", ".")
-
-        if "+" in item[1]:
-            item[1] = item[1].replace("+", "")
-
-        if "З" in item[1]:
-            item[1] = item[1].replace("З", "3")
-
+        logger.info(item)
         if 'k' in item[1]:
-            item[1] = item[1].split("k")[0]
-            if item[1].isalnum():
-                hour = float(item[1]) * 1000
-            else:
-                hour = 1
-        else:
-            hour = float(item[1].split(" ")[0])
+            hour = item[1].split("k")[0].replace("+", "").replace(",", ".")
+            hour = correct_profit_per_hour(hour)
 
-        # print(hour, end=" ")
+        else:
+            hour = float(item[1].split(" ")[0].replace("+", ""))
+
         if "," in item[2]:
             item[2] = item[2].replace(",", ".")
 
@@ -95,9 +84,9 @@ def calc_profit(data):
 
         price = float(item[2].split("k")[0]) * 1000
 
-        # print(price)
+        logger.info(f"{item[0]} = {price} // {hour} = {price // hour}")
         profit_items[item[0]] = price // hour
-        # print(profit_items)
+
     return profit_items
 
 
@@ -116,7 +105,7 @@ def main():
 
     profit = {k: v for k, v in sorted(calc_profit(cropped_images).items(), key=lambda item: item[1])}
     for i, key in enumerate(profit.keys()):
-        print(f'{i+1} {key}: {profit[key]}')
+        print(f'{i + 1} {key}: {profit[key]}')
 
 
 if __name__ == "__main__":
