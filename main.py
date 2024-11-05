@@ -80,6 +80,8 @@ def calc_profit(data):
         else:
             hour = float(item[1].split(" ")[0].replace("+", ""))
 
+        item[2] = item[2].lower()
+
         if "," in item[2]:
             item[2] = item[2].replace(",", ".")
 
@@ -89,12 +91,15 @@ def calc_profit(data):
         if "O" in item[2]:
             item[2] = item[2].replace("O", "0")
 
+        if "б" in item[2]:
+            item[2] = item[2].replace("б", "6")
+
         if "k" in item[2]:
             price = float(item[2].split("k")[0]) * 1000
-        elif "M" in item[2]:
-            price = float(item[2].split("M")[0]) * 1000000
-        elif "М" in item[2]: # russian M
-            price = float(item[2].split("М")[0]) * 1000000
+        elif "m" in item[2]:
+            price = float(item[2].split("m")[0]) * 1000000
+        elif "м" in item[2]: # russian M
+            price = float(item[2].split("м")[0]) * 1000000
         else:
             price = float(item[2])
 
