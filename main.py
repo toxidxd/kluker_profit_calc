@@ -73,6 +73,10 @@ def calc_profit(data):
             hour = item[1].split("k")[0].replace("+", "").replace(",", ".")
             hour = correct_profit_per_hour(hour)
 
+        elif 'M' in item[1]:
+            hour = item[1].split("M")[0].replace("+", "").replace(",", ".")
+            hour = correct_profit_per_hour(hour)
+
         else:
             hour = float(item[1].split(" ")[0].replace("+", ""))
 
@@ -82,14 +86,24 @@ def calc_profit(data):
         if " " in item[2]:
             item[2] = item[2].replace(" ", ".")
 
-        price = float(item[2].split("k")[0]) * 1000
+        if "O" in item[2]:
+            item[2] = item[2].replace("O", "0")
+
+        if "k" in item[2]:
+            price = float(item[2].split("k")[0]) * 1000
+        elif "M" in item[2]:
+            price = float(item[2].split("M")[0]) * 1000000
+        elif "М" in item[2]: # russian M
+            price = float(item[2].split("М")[0]) * 1000000
+        else:
+            price = float(item[2])
 
         logger.info(f"{item[0]} = {price} // {hour} = {price // hour}")
         profit_items[item[0]] = price // hour
 
     return profit_items
 
-
+4.03
 def main():
     cropped_images = []
     crop_num = 1
