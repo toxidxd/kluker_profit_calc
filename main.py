@@ -88,11 +88,10 @@ def calc_profit(data):
         if " " in item[2]:
             item[2] = item[2].replace(" ", ".")
 
-        if "O" in item[2]:
-            item[2] = item[2].replace("O", "0")
+        if "o" in item[2]:
+            item[2] = item[2].replace("o", "0")
 
-        if "б" in item[2]:
-            item[2] = item[2].replace("б", "6")
+        item[2] = item[2].replace("б", "6").replace("з", "3")
 
         if "k" in item[2]:
             price = float(item[2].split("k")[0]) * 1000
@@ -103,12 +102,11 @@ def calc_profit(data):
         else:
             price = float(item[2])
 
-        logger.info(f"{item[0]} = {price} // {hour} = {price // hour}")
+        logger.info(f"{item[0]} = {price} // {hour}")
         profit_items[item[0]] = price // hour
 
     return profit_items
 
-4.03
 def main():
     cropped_images = []
     crop_num = 1
